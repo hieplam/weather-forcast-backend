@@ -14,14 +14,17 @@ namespace weather_forcast_backend
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            //var folder = Environment.SpecialFolder.LocalApplicationData;
-            //var path = Environment.GetFolderPath(folder);
-            //DbPath = $"{path}{System.IO.Path.DirectorySeparatorChar}blogging.db";
+
         }
 
-        //// The following configures EF to create a Sqlite database file in the
-        //// special "local" folder for your platform.
-        //protected override void OnConfiguring(DbContextOptionsBuilder options)
-        //    => options.UseSqlite($"Data Source={DbPath}");
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Todo>().HasData(
+                new Todo { Id = 1, Note = "Note 1" }, 
+                new Todo { Id = 2, Note = "Note 1" }, 
+                new Todo { Id = 3, Note = "Note 1" }
+                );
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
