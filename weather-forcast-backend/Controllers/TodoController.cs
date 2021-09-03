@@ -23,7 +23,6 @@ namespace weather_forcast_backend.Controllers
             try
             {
                 var result = todoService.GetAll();
-                result.ForEach(item => item.CreatedAt.ToString("dddd, dd MMMM yyyy"));
                 var res = new TodoResponse
                 {
                     Data = result,

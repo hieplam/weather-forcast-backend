@@ -9,7 +9,7 @@ YOUR_LOCAL_HOST/swagger/index.html
 
 * Seed data and Database migration was handle automatically by EF core.
 * Db connection strings and other config eg weather location, open weather api keys are stored in `appSettings.json`.
-* Caching technique used: response cache, which configed from middleware in `Startup.cs`,
+* Caching technique used: response cache, which configed from middleware in `Startup.cs`.
 * The app also have global custom `JsonConverer` for `DateTime` to format datetime string.
 
 ## To apply seed data and db migration

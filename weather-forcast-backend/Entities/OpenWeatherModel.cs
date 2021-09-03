@@ -1,6 +1,5 @@
 ﻿namespace weather_forcast_backend
 {
-
     public class OpenWeatherModel
     {
         public Main main { get; set; }

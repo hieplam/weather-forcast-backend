@@ -4,7 +4,6 @@ namespace weather_forcast_backend
 {
     public class Todo
     {
-
         public int Id { get; set; }
         public double Temp { get; set; }
         public double FeelsLike { get; set; }
