@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace weather_forcast_backend.Controllers
@@ -11,29 +15,41 @@ namespace weather_forcast_backend.Controllers
     [Route("api/[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly IOptions<OpenWeatherConfig> _openWeatherConfig;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IHttpClientFactory clientFactory, IOptions<OpenWeatherConfig> openWeatherConfig)
         {
             _logger = logger;
+            _clientFactory = clientFactory;
+            _openWeatherConfig = openWeatherConfig;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IActionResult> Get()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            var endpointUrl = $"{_openWeatherConfig.Value.ApiEndpoint}&q={_openWeatherConfig.Value.Location}&appid={_openWeatherConfig.Value.AppId}";
+            var request = new HttpRequestMessage(HttpMethod.Get, endpointUrl);
+            var client = _clientFactory.CreateClient();
+            var response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var weatherModel = await JsonSerializer.DeserializeAsync<OpenWeatherModel>(responseStream);
+                return new JsonResult(weatherModel);
+            }
+            else
+            {
+                return BadRequest();
+            }            
         }
+    }
+
+
+    public class OpenWeatherConfig
+    {
+        public string ApiEndpoint { get; set; }
+        public string AppId { get; set; }
+        public string Location { get; set; }
     }
 }
