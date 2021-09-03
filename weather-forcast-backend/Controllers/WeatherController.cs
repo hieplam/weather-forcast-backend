@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System;
+using Microsoft.Net.Http.Headers;
 
 namespace weather_forcast_backend.Controllers
 {
@@ -15,11 +16,15 @@ namespace weather_forcast_backend.Controllers
         private readonly ILogger<WeatherController> _logger;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IOptions<OpenWeatherConfig> _openWeatherConfig;
-        public WeatherController(ILogger<WeatherController> logger, IHttpClientFactory clientFactory, IOptions<OpenWeatherConfig> openWeatherConfig)
+        private readonly IMemStore _memStoreSingleton;
+
+        public WeatherController(ILogger<WeatherController> logger, IHttpClientFactory clientFactory, 
+            IOptions<OpenWeatherConfig> openWeatherConfig, IMemStore memStore)
         {
             _logger = logger;
             _clientFactory = clientFactory;
             _openWeatherConfig = openWeatherConfig;
+            _memStoreSingleton = memStore;
         }
 
         [ResponseCache(Duration = 60 * 10)]
@@ -34,8 +39,16 @@ namespace weather_forcast_backend.Controllers
             {
                 using var responseStream = await response.Content.ReadAsStreamAsync();
                 var weatherModel = await JsonSerializer.DeserializeAsync<OpenWeatherModel>(responseStream);
+                _memStoreSingleton.Store(
+                    new UserInfo
+                    {
+                        BrowserAgent = Request.Headers.ContainsKey(HeaderNames.UserAgent) ? Request.Headers[HeaderNames.UserAgent] : "",
+                        RemoteAddress = Request?.Host.Value,
+                        TimeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()
+                    });
+
                 return new JsonResult(weatherModel);
-            }
+            }        
             else
             {
                 return BadRequest();

@@ -27,8 +27,10 @@ namespace weather_forcast_backend
             services.AddControllers();
             services.AddDbContext<AppDbContext>(builder => builder.UseSqlServer(Configuration.GetConnectionString("DefaultDatabase")));
 
+            //DI registration
             services.AddScoped<ITodoRepository, TodoRepository>();
             services.AddScoped<ITodoService, TodoService>();
+            services.AddSingleton<IMemStore, MemStoreSingleton>();
 
             services.AddHttpClient();
             services.Configure<OpenWeatherConfig>(Configuration.GetSection("OpenWeather"));
@@ -53,19 +55,7 @@ namespace weather_forcast_backend
             app.UseRouting();
 
             app.UseResponseCaching();
-            //app.Use(async (context, next) =>
-            //{
-            //    context.Response.GetTypedHeaders().CacheControl =
-            //        new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
-            //        {
-            //            Public = true,
-            //            MaxAge = TimeSpan.FromSeconds(60*10)
-            //        };
-            //    context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] =
-            //        new string[] { "Accept-Encoding" };
 
-            //    await next();
-            //});
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
