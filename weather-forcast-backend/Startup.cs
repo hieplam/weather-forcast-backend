@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using weather_forcast_backend.Controllers;
+using System;
+using Microsoft.AspNetCore.Http;
 
 namespace weather_forcast_backend
 {
@@ -21,7 +23,7 @@ namespace weather_forcast_backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddResponseCaching();
             services.AddControllers();
             services.AddDbContext<AppDbContext>(builder => builder.UseSqlServer(Configuration.GetConnectionString("DefaultDatabase")));
 
@@ -50,12 +52,27 @@ namespace weather_forcast_backend
 
             app.UseRouting();
 
+            app.UseResponseCaching();
+            //app.Use(async (context, next) =>
+            //{
+            //    context.Response.GetTypedHeaders().CacheControl =
+            //        new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+            //        {
+            //            Public = true,
+            //            MaxAge = TimeSpan.FromSeconds(60*10)
+            //        };
+            //    context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] =
+            //        new string[] { "Accept-Encoding" };
+
+            //    await next();
+            //});
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

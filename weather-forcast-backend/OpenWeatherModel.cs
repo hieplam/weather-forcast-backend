@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-
-namespace weather_forcast_backend
+﻿namespace weather_forcast_backend
 {
 
     public class OpenWeatherModel
     {
         public Main main { get; set; }
+        public string name { get; set; }
     }
     public class Main
     {

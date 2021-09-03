@@ -1,30 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System;
 
 namespace weather_forcast_backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class WeatherController : ControllerBase
     {
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<WeatherController> _logger;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IOptions<OpenWeatherConfig> _openWeatherConfig;
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IHttpClientFactory clientFactory, IOptions<OpenWeatherConfig> openWeatherConfig)
+        public WeatherController(ILogger<WeatherController> logger, IHttpClientFactory clientFactory, IOptions<OpenWeatherConfig> openWeatherConfig)
         {
             _logger = logger;
             _clientFactory = clientFactory;
             _openWeatherConfig = openWeatherConfig;
         }
 
+        [ResponseCache(Duration = 60 * 10)]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -44,7 +42,6 @@ namespace weather_forcast_backend.Controllers
             }            
         }
     }
-
 
     public class OpenWeatherConfig
     {
