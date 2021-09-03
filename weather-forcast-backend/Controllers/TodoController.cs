@@ -23,6 +23,7 @@ namespace weather_forcast_backend.Controllers
             try
             {
                 var result = todoService.GetAll();
+                result.ForEach(item => item.CreatedAt.ToString("dddd, dd MMMM yyyy"));
                 var res = new TodoResponse
                 {
                     Data = result,
@@ -39,7 +40,7 @@ namespace weather_forcast_backend.Controllers
                     IsSuccess = false,
                     Message = "unexpected error, please try again"
                 });
-            }   
+            }
         }
 
         [HttpGet("{id:int}")]
@@ -66,7 +67,7 @@ namespace weather_forcast_backend.Controllers
                 });
             }
         }
-       
+
         [HttpPost]
         public IActionResult Create(List<Todo> entityToCreate)
         {
@@ -100,7 +101,7 @@ namespace weather_forcast_backend.Controllers
                 var res = new TodoResponse
                 {
                     IsSuccess = true,
-                    Message ="update success",
+                    Message = "update success",
                     Data = result,
                 };
                 return new JsonResult(res);

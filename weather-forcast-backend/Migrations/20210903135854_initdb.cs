@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace weather_forcast_backend.Migrations
 {
@@ -12,7 +13,14 @@ namespace weather_forcast_backend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Temp = table.Column<double>(type: "float", nullable: false),
+                    FeelsLike = table.Column<double>(type: "float", nullable: false),
+                    TempMin = table.Column<double>(type: "float", nullable: false),
+                    TempMax = table.Column<double>(type: "float", nullable: false),
+                    Pressure = table.Column<int>(type: "int", nullable: false),
+                    Humidity = table.Column<int>(type: "int", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

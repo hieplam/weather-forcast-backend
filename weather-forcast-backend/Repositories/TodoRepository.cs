@@ -36,6 +36,11 @@ namespace weather_forcast_backend
         {
             try
             {
+                entitiesToCreate.ForEach(item =>
+                {
+                    item.CreatedAt = System.DateTime.Now;
+                    item.Id = 0;
+                });
                 dbContext.Todos.AddRange(entitiesToCreate);
                 dbContext.SaveChanges();
                 return true;
@@ -51,7 +56,7 @@ namespace weather_forcast_backend
         {
             try
             {
-                dbContext.Todos.UpdateRange(entityToUpdate);
+                dbContext.Todos.UpdateRange(entityToUpdate.Where(item => item.Id >0));
                 dbContext.SaveChanges();
                 return entityToUpdate;
             }

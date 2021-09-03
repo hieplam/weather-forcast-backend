@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using weather_forcast_backend.Controllers;
 using System;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace weather_forcast_backend
 {
@@ -19,12 +21,18 @@ namespace weather_forcast_backend
         }
 
         public IConfiguration Configuration { get; }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {            
             services.AddResponseCaching();
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+                });
+
             services.AddDbContext<AppDbContext>(builder => builder.UseSqlServer(Configuration.GetConnectionString("DefaultDatabase")));
 
             //DI registration
